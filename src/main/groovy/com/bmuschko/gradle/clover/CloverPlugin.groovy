@@ -327,7 +327,7 @@ class CloverPlugin implements Plugin<Project> {
         def testSrcDirs = [] as Set<File>
 
         //default test task
-        if (testTask.testSrcDirs as Set<File> == project.sourceSets.test.java.srcDirs) {
+        if (!testTask.ext.has('testSrcDirs')) {
             if(hasGroovyPlugin(project)) {
                 addExistingSourceDirectories(testSrcDirs, project.sourceSets.test.java.srcDirs)
                 addExistingSourceDirectories(testSrcDirs, project.sourceSets.test.groovy.srcDirs)
@@ -336,7 +336,7 @@ class CloverPlugin implements Plugin<Project> {
                 addExistingSourceDirectories(testSrcDirs, project.sourceSets.test.java.srcDirs)
             }
         } else {
-            addExistingSourceDirectories(testSrcDirs, testTask.testSrcDirs as Set)
+            addExistingSourceDirectories(testSrcDirs, testTask.ext.testSrcDirs as Set)
         }
 
         if(cloverPluginConvention.additionalTestDirs) {

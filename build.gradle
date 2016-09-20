@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
         //classpath 'org.gradle.api.plugins:gradle-clover-plugin:0.8'
     }
 }
@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'clover'
 
-group = 'com.bmuschko'
+group = 'ARIN'
 version = '2.0.2'
 defaultTasks 'clean', 'build'
 
@@ -109,6 +109,15 @@ artifacts {
 }
 
 publishing {
+    repositories{
+        maven {
+            credentials {
+                username project.hasProperty('mavenUser') ? project.getProperty('mavenUser') : null
+                password project.hasProperty('mavenPassword') ? project.getProperty('mavenPassword') : null
+            }
+            url project.hasProperty('mavenUrl') ? project.getProperty('mavenUrl') : null
+        }
+    }
     publications {
         mavenJava(MavenPublication) {
             from components.java
@@ -172,5 +181,5 @@ bintray {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '3.0'
 }
