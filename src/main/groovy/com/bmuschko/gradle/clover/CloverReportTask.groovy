@@ -54,6 +54,8 @@ abstract class CloverReportTask extends DefaultTask {
     Boolean json
     Boolean html
     Boolean pdf
+    Integer numThreads
+    String coverageCacheSize
 
     /**
      * Checks to see if at least on report type is selected.
@@ -72,16 +74,16 @@ abstract class CloverReportTask extends DefaultTask {
     private List getSelectedReportTypes() {
         def selectedReportTypes = []
 
-        if(getXml()) {
+        if (getXml()) {
             selectedReportTypes << ReportType.XML.format
         }
-        if(getJson()) {
+        if (getJson()) {
             selectedReportTypes << ReportType.JSON.format
         }
-        if(getHtml()) {
+        if (getHtml()) {
             selectedReportTypes << ReportType.HTML.format
         }
-        if(getPdf()) {
+        if (getPdf()) {
             selectedReportTypes << ReportType.PDF.format
         }
 
@@ -92,10 +94,9 @@ abstract class CloverReportTask extends DefaultTask {
      * Validates configuration before running the task.
      */
     private void validateConfiguration() {
-        if(!isAtLeastOneReportTypeSelected()) {
+        if (!isAtLeastOneReportTypeSelected()) {
             throw new InvalidUserDataException("No report type selected. Please pick at least one: ${ReportType.getAllFormats()}.")
-        }
-        else {
+        } else {
             logger.info "Selected report types = ${getSelectedReportTypes()}"
         }
     }
@@ -108,19 +109,19 @@ abstract class CloverReportTask extends DefaultTask {
     protected void writeReports(String filter = null) {
         File cloverReportDir = new File("${getReportsDir()}/clover")
 
-        if(getXml()) {
+        if (getXml()) {
             writeReport(new File(cloverReportDir, 'clover.xml'), ReportType.XML, filter)
         }
 
-        if(getJson()) {
+        if (getJson()) {
             writeReport(new File(cloverReportDir, 'json'), ReportType.JSON, filter)
         }
 
-        if(getHtml()) {
+        if (getHtml()) {
             writeReport(new File(cloverReportDir, 'html'), ReportType.HTML, filter)
         }
 
-        if(getPdf()) {
+        if (getPdf()) {
             ant."clover-pdf-report"(initString: "${project.buildDir.canonicalPath}/${getInitString()}",
                     outfile: new File(cloverReportDir, 'clover.pdf'), title: project.name)
         }
@@ -134,12 +135,13 @@ abstract class CloverReportTask extends DefaultTask {
      * @param filter Optional filter
      */
     private void writeReport(File outfile, ReportType reportType, String filter) {
-        ant."clover-report"(initString: "$project.buildDir/${getInitString()}") {
-            current(outfile: outfile, title: project.name) {
-                if(filter) {
+        ant."clover-report"(
+                initString: "$project.buildDir/${getInitString()}",
+                coverageCacheSize: getCoverageCacheSize()) {
+            current(outfile: outfile, title: project.name, numThreads: getNumThreads()) {
+                if (filter) {
                     format(type: reportType.format, filter: filter)
-                }
-                else {
+                } else {
                     format(type: reportType.format)
                 }
             }

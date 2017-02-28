@@ -25,5 +25,7 @@ class CloverReportConvention {
     Boolean json = false
     Boolean html = false
     Boolean pdf = false
+    Integer numThreads = 2
+    String coverageCacheSize = '256m'
     String filter
 }
