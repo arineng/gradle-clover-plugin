@@ -212,6 +212,8 @@ class CloverPlugin implements Plugin<Project> {
         task.conventionMapping.map('json') { cloverPluginConvention.report.json }
         task.conventionMapping.map('html') { cloverPluginConvention.report.html }
         task.conventionMapping.map('pdf') { cloverPluginConvention.report.pdf }
+        task.conventionMapping.map('numThreads') { cloverPluginConvention.report.numThreads }
+        task.conventionMapping.map('coverageCacheSize') { cloverPluginConvention.report.coverageCacheSize }
     }
 
     /**
